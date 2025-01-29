@@ -1,0 +1,39 @@
+name: Node.js CI with Cache
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Fazer checkout do repositório
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Configurar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      # Step 3: Restaurar o cache do npm
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-cache-${{ runner.os }}-
+
+      # Step 4: Instalar dependências
+      - name: Install dependencies
+        run: npm install
+
+      # Step 5: Testar o código
+      - name: Run
+        run: npm start
